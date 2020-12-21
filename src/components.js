@@ -3,5 +3,5 @@ import item from './components/item';
 
 export default (editor, config = {}) => {
   container(editor, config);
-  item(editor, config);
+  // item(editor, config);
 }

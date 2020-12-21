@@ -1,7 +1,6 @@
 import loadComponents from './components';
 import loadBlocks from './blocks';
 import en from './locale/en';
-import { OWL_TYPE } from './consts';
 
 export default (editor, opts = {}) => {
   const options = {
@@ -32,14 +31,10 @@ export default (editor, opts = {}) => {
   });
 
   editor.on('load', () => {
-    // const head = canvas.getDocument().head;
-    // head.insertAdjacentHTML('beforeend', `
-    //   <link rel="stylesheet" href="${options.cssOwl}" />
-    //   <script src="${options.jsOwl}"></script>
-    // `);
-
-    // editor.addComponents(OWL_TYPE,
-    //   { at: 0 }
-    // );
+    // const blocks = blockManager.getAll();
+    // console.log(JSON.stringify(blocks));
+    editor.addComponents('test',
+      { at: 0 }
+    );
   });
 };

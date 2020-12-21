@@ -7,9 +7,16 @@ export default (editor, opts = {}) => {
     label: 'Carousel',
     category: opts.gridsCategory || 'Basic',
     content:
-    //`<div>Hello world ${OWL_TYPE}</div>`,
+    // `<div>Hello world ${OWL_TYPE}</div>`,
       {
         type: OWL_CONTAINER
       }
+  });
+
+  bm.add('test', {
+    label: 'test',
+    category: opts.gridsCategory || 'Basic',
+    content:
+    `<div>Hello world ${OWL_TYPE}</div>`
   });
 }
