@@ -1,3 +1,4 @@
+import loadCommands from './commands';
 import loadComponents from './components';
 import loadBlocks from './blocks';
 import en from './locale/en';
@@ -20,6 +21,8 @@ export default (editor, opts = {}) => {
   const canvas = editor.Canvas;
   const trait = editor.Canvas;
 
+  // Add commands
+  loadCommands(editor, options);
   // Add components
   loadComponents(editor, options);
   // Add blocks

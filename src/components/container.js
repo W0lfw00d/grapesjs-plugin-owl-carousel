@@ -8,7 +8,7 @@ export default (editor, opts = {}) => {
   const defaultModel = defaultType.model;
   const defaultView = defaultType.view;
 
-  // TODO: REMOVE THIS AND USE THE TRAITS
+  // TODO: REMOVE THIS AND USE THE TRAITS/MODEL
   const items = [
     {
       name: 'Deaultt Glasses #1',
@@ -30,14 +30,6 @@ export default (editor, opts = {}) => {
         {
           name: '1.6 DV Platinum / DV BlueProtect',
           price: 25
-        },
-        {
-          name: 'PhotoFusion LotuTec UV',
-          price: 40
-        },
-        {
-          name: 'PhotoFusion DuraVision Platinum UV',
-          price: 55
         }
       ]
     },
@@ -55,7 +47,8 @@ export default (editor, opts = {}) => {
           price: 55
         }
       ]
-    }, {
+    },
+    {
       name: 'deefaultt #3',
       img: 'http://gpj.localhost/files/uploads/feature-options.png',
       price: 123,
@@ -76,12 +69,29 @@ export default (editor, opts = {}) => {
     content: `${renderItems([item])}`
   }));
 
+  // Open modal to select glasses
+  const chooseGlasses = (editor, model) => {
+    const comp = editor.DomComponents.getWrapper();
+    const container = comp.find('div.owl-carousel');
+    console.log('container', container);
+    editor.select(model);
+    editor.runCommand('show-glasses');
+  };
+
   const containerModel = defaultModel.extend({
       init() {
         // this.on('change:attributes:content', this.handleTypeChange);
         this.on('change:glasses', this.handleTypeChange);
       },
-
+      chooseGlasses(editor, model) {
+        const comp = editor.DomComponents.getWrapper();
+        console.log('comp', comp);
+        debugger;
+        const container = comp.find('div[class=owl-carousel]');
+        console.log('container', container);
+        editor.select(container);
+        editor.runCommand('show-glasses');
+      },
       handleTypeChange() {
         console.log('Glasses has been changed to: ', this.getAttributes());
       },
@@ -90,73 +100,12 @@ export default (editor, opts = {}) => {
         tagName: 'div',
         traits: [
           {
-            label: 'Glasses',
+            label: 'Content',
+            type: 'button',
             name: 'glasses',
-            changeProp: 1,
-            type: 'select',
-            options: [
-              {
-                name: 'Glasses #1',
-                img: 'http://gpj.localhost/files/uploads/feature-modern.png',
-                price: 42,
-                surcharges: [
-                  {
-                    name: '1.5 DV Silver / Lotutec',
-                    price: 0
-                  },
-                  {
-                    name: '1.5 DV Platinum / DV BlueProtect',
-                    price: 15
-                  },
-                  {
-                    name: '1.6 DV Silver / Lotutec',
-                    price: 10
-                  },
-                  {
-                    name: '1.6 DV Platinum / DV BlueProtect',
-                    price: 25
-                  },
-                  {
-                    name: 'PhotoFusion LotuTec UV',
-                    price: 40
-                  },
-                  {
-                    name: 'PhotoFusion DuraVision Platinum UV',
-                    price: 55
-                  }
-                ]
-              },
-              {
-                name: 'Glasses #2',
-                img: 'http://gpj.localhost/files/uploads/feature-module.png',
-                price: 321,
-                surcharges: [
-                  {
-                    name: 'PhotoFusion LotuTec UV',
-                    price: 40
-                  },
-                  {
-                    name: 'PhotoFusion DuraVision Platinum UV',
-                    price: 55
-                  }
-                ]
-              },
-              {
-                name: 'Glasses #3',
-                img: 'http://gpj.localhost/files/uploads/feature-options.png',
-                price: 123,
-                surcharges: [
-                  {
-                    name: 'DuraVision Platinum UV',
-                    price: 44
-                  },
-                  {
-                    name: 'PhotoFusion LotuTec UV',
-                    price: 55
-                  }
-                ]
-              }
-            ]
+            text: 'Choose glasses',
+            full: 1,
+            command: (editor, model) => chooseGlasses(editor, model)
           }
         ],
         glasses: items,
@@ -166,7 +115,7 @@ export default (editor, opts = {}) => {
           'data-gjs-type': OWL_TYPE
         },
         components:
-          renderContent(items),
+          (model) => renderContent(model.attributes.glasses),
         // [
         // { type: OWL_ITEM },
         // ],
@@ -213,8 +162,26 @@ export default (editor, opts = {}) => {
       }
     });
 
+  const containerView = defaultView.extend({
+    ...defaultView.prototype.defaults,
+    events: {
+      click: 'click'
+    },
+
+    init() {
+      // TODO: this doesn't work, need to rerender the view when the model changes...
+      this.listenTo(this.model, 'change:attributes:glasses', this.render())
+    },
+
+    click(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      chooseGlasses(editor, this.model)
+    }
+  });
+
   domc.addType(OWL_CONTAINER, {
     model: containerModel,
-    view: defaultView
+    view: containerView
   });
 };
